@@ -1,3 +1,5 @@
+var is = require('is-it')
+
 function theThingIs (subject) {
 
 }
