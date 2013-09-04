@@ -7,25 +7,33 @@ describe('the', function() {
   })
 })
 
-describe('the(subject)', function() {
+describe('the(thing)', function() {
   it('returns an object', function() {
-    assert(typeof the('subject') === 'object')
-  })
-  it('with `is` property', function() {
-    assert(typeof the('subject').is === 'object')
-  })
-  it('with `is.not` property', function() {
-    assert(typeof the('subject').is === 'object')
-  })
-  it('with methods attached to `is` property', function() {
-    assert(typeof the('subject').is === 'object')
-  })
-  it('with methods attached to `is.not` property', function() {
-    assert(typeof the('subject').is === 'object')
+    assert(typeof the('thing') === 'object')
   })
 })
 
+describe('the(thing).is', function() {
+  it('is a function', function() {
+    assert(typeof the('thing').is === 'function')
+  })
+})
 
-// history
-// the.last
-// the.past
+describe("the(0).is(['integer'])", function() {
+  it('returns true', function() {
+    assert.equal(the(0).is(['integer']), true)
+  })
+})
+
+describe('the(thing).isnt', function() {
+  it('is a function', function() {
+    assert(typeof the('thing').isnt === 'function')
+  })
+})
+
+describe("the(0).isnt(['integer'])", function() {
+  it('returns false', function() {
+    assert.equal(the(0).isnt(['integer']), false)
+  })
+})
+
