@@ -20,8 +20,5 @@
   "gitHead": "adb81e723ae719a2cc21f9a91103d5acd783f0fd",
   "dependencies": {
     "is-it": "~1.0.3"
-  },
-  "devDependencies": {
-    "mocha": "~1.12.1"
   }
 }
