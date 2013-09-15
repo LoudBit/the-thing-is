@@ -5,8 +5,9 @@
 // Usage:
 //
 // var whatYouExpect = 'number'  --  string (least useful)
-// var whatYouExpect = ['present', 'number', {greaterThan:0}] -- array (tightest to write)
+// var whatYouExpect = ['present', 'number', {greaterThan:0}] -- array (tightest to write, preferred?)
 // var whatYouExpect = {present:true, number:true, greaterThan:0} -- object (verbose, unreliable order)
+// var whatYouExpect = [{present:true}, {number:true}, {greaterThan:0}] -- array of objects (very verbose, reliable order)
 //
 // if (the(thing).is(whatYouExpect)) {
 //   fuckYeah()
@@ -33,6 +34,14 @@ the.last = null
 // is, isnt, is.not
 var comparisons = {
   is: function(whatYouExpect) {
+    // most basic test, will test presence of the last thing
+    if (is.not.present(whatYouExpect))
+      return is.present(the.last.thing)
+
+    // if (is.array(whatYouExpect))
+    //   return
+
+    // undefined or null -- check mere presence of a thing
     // 'present' -- single boolean check
     // ['present', 'number'] -- array of boolean
     // {greaterThan:0} -- configuration object with single condition
@@ -41,7 +50,7 @@ var comparisons = {
     // ['present', 'integer', {greaterThanOrEqualTo:0}] -- preferred
   },
   isnt: function(whatYouExpect) {
-
+    return !this.is(whatYouExpect)
   }
 }
 
