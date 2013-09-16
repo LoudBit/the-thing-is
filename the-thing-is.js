@@ -19,9 +19,9 @@
 
 // Dependencies
 var is = require('is-it')
-var method
 
 
+// the -- function you care about
 function the(thing) {
   the.past.push({ thing:thing })
   the.last = the.past[the.past.length-1 || 0]
@@ -31,14 +31,14 @@ function the(thing) {
 the.past = []
 the.last = null
 
-// is, isnt, is.not
+// is, isnt
 var comparisons = {
   is: function(whatYouExpect) {
 
     var its = true
 
     // the(thing).is()
-    // undefined or null -- check mere presence of a thing
+    // whatYouExpect is undefined or null -- so check mere presence of a thing
     if ( is.not.present(whatYouExpect) ) {
       its = is.present(the.last.thing)
     }
@@ -51,6 +51,7 @@ var comparisons = {
 
 
     // ['present', 'number'] -- array of boolean
+    // the(thing).is(['present', 'integer'])
     if ( is.array(whatYouExpect) ) {
       for (var i = 0; i < whatYouExpect.length && its == true; i++) {
         if (is.string(whatYouExpect[i]))
@@ -71,27 +72,7 @@ var comparisons = {
   }
 }
 
-function isProxy(config) {
-  return function() {
-    var args = Array.prototype.slice.call(arguments)
-    args.unshift(the.last.subject)
-    if ( !the.last.error && is.not[method].apply(this, args) ) {
-      the.error(method)
-    }
-  }
-}
-
-function isntProxy(method) {
-  return function() {
-    var args = Array.prototype.slice.call(arguments)
-    args.unshift(the.last.subject)
-    if (!the.last.error && is[method].apply(this, args)) {
-      the.error(method)
-    }
-    return comparisonOperators.isnt
-  }
-}
-
+// simple yes/no type comparisons against an expectation
 function simplyCheck(expectation) {
   if (is[expectation])
     return is[expectation](the.last.thing)
@@ -99,13 +80,7 @@ function simplyCheck(expectation) {
     throw new TypeError("`"+expectation+"` isn't a valid comparison method.")
 }
 
-
-for (method in is) {
-  if (is.hasOwnProperty(method) && typeof is[method] == 'function') {
-    // create the(thing).is.whatever()
-    comparisons.is[method] = (isProxy)(method)
-    comparisons.isnt[method] = (isntProxy)(method)
-  }
-}
+// TODO: compare the thing against a standard
+// function
 
 module.exports = the
