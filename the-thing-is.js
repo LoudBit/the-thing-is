@@ -6,6 +6,7 @@
 //
 // var whatYouExpect = 'number'  --  string (least useful)
 // var whatYouExpect = ['present', 'number', {greaterThan:0}] -- array (tightest to write, preferred?)
+// var whatYouExpect = ['present', 'integer', {greaterThan:0, lessThan:256}] -- combo v2, maintains order, groups comparisons that are chaotic
 // var whatYouExpect = {present:true, number:true, greaterThan:0} -- object (verbose, unreliable order)
 // var whatYouExpect = [{present:true}, {number:true}, {greaterThan:0}] -- array of objects (very verbose, reliable order)
 //
