@@ -62,7 +62,7 @@ describe('the(thing).is', function() {
       assert.equal(the('0').is(['string', 'aNumber', 'aInteger']), true)
     })
   })
-  describe("the('0').is(['string', 'number', 'nnteger'])", function() {
+  describe("the('0').is(['string', 'number', 'integer'])", function() {
     it('returns false', function() {
       assert.equal(the('0').is(['string', 'number', 'integer']), false)
     })
