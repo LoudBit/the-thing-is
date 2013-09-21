@@ -48,7 +48,7 @@ var comparisons = {
     // the(thing).is('integer') // true/false
     // the(thing).is('borkborkbork') // throw
     if ( is.string(whatYouExpect) )
-      its = doBooleanCheck(whatYouExpect)
+      its = booleanCheck(whatYouExpect)
 
 
     // ['present', 'number'] -- array of boolean
@@ -56,7 +56,7 @@ var comparisons = {
     if ( is.array(whatYouExpect) ) {
       for (var i = 0; i < whatYouExpect.length && its == true; i++) {
         if (is.string(whatYouExpect[i]))
-          its = doBooleanCheck(whatYouExpect[i])
+          its = booleanCheck(whatYouExpect[i])
         if (!its)
           the.last.error = '' + the.last.thing + ' is not ' + whatYouExpect[i];
       }
@@ -74,7 +74,7 @@ var comparisons = {
 }
 
 // simple yes/no type comparisons against an expectation
-function doBooleanCheck(expectation) {
+function booleanCheck(expectation) {
   if (is[expectation])
     return is[expectation](the.last.thing)
   else
