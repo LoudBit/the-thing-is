@@ -70,6 +70,40 @@ describe('the(thing).is', function() {
       assert(the.last.error)
     })
   })
+
+  describe("an incorrect test of a standard", function() {
+    it('throws an error', function(){
+      var whatIExpect = [{number:'wrong'}]
+
+      assert.throws(function(){
+        the('0').is(whatIExpect)
+      })
+    })
+  })
+
+
+  describe("the('0').is(['string', {number:false, aInteger:true, gte:0, lte:100}])", function() {
+    it('passes all the conditions', function(){
+
+      var whatIExpect = [
+        'string',
+        'aInteger',
+        {
+          number: false, // this is a trick - `number:false` is true, but `number` isn't a check against a standard
+          aInteger: true,
+          gte:0,
+          lte:100
+        }
+      ]
+      assert( the('0').is(whatIExpect) )
+
+      // TODO: add an assertion for the error message
+      assert( the.last.error.length )
+      assert.equal( the.last.error[0], '' )
+
+    })
+  })
+
 })
 
 describe('the(thing).isnt', function() {
