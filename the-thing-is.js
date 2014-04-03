@@ -99,6 +99,10 @@ function subjectCheck(expectation) {
   // loop through the keys in the object to
   Object.keys(expectation).forEach(function(key, value){
     standard = expectation[key]
+
+    if ( !is[key] )
+      throw new TypeError("`"+key+"` isn't a valid comparison method.")
+
     if ( is[key](the.last.thing, standard) ) {
       the.last.error.push(['See, the thing is, ', the.last.thing, ' (', typeof the.last.thing, ') isn\'t ', key, ' ', value, '.'].join(''));
     }

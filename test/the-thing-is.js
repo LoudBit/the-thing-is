@@ -79,6 +79,16 @@ describe("expectations array", function(){
 })
 
 describe("expectations against a standard", function(){
+
+  describe("a test of a standard that doesn't exist", function(){
+    it("should throw an error", function(){
+      var whatIExpect = [{gonnaGetThrown:true}]
+      assert.throws(function(){
+        the(0).is(whatIExpect)
+      }, TypeError)
+    })
+  })
+
   describe("an incorrect test of a standard", function(){
     it("shouldn't throw an error", function(){
       var whatIExpect = [{number:'wrong'}]
