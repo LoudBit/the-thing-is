@@ -91,19 +91,14 @@ function booleanCheck(expectation) {
 }
 
 function subjectCheck(expectation) {
-  var soFar = null
-  var standard = null
-
   the.last.error = []
 
   // loop through the keys in the object to
   Object.keys(expectation).forEach(function(key, value){
-    standard = expectation[key]
-
     if ( !is[key] )
       throw new TypeError("`"+key+"` isn't a valid comparison method.")
 
-    if ( is[key](the.last.thing, standard) ) {
+    if ( is[key](the.last.thing, expectation[key]) ) {
       the.last.error.push(['See, the thing is, ', the.last.thing, ' (', typeof the.last.thing, ') isn\'t ', key, ' ', value, '.'].join(''));
     }
   })
