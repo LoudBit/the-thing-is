@@ -1,6 +1,6 @@
 {
   "name": "the-thing-is",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Configuration drivin validation",
   "main": "the-thing-is.js",
   "scripts": {
