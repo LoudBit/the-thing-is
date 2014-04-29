@@ -19,7 +19,7 @@
 // }
 
 // Dependencies
-var is = require('is-it')
+var is = require('is-too')
 
 
 // the -- function you care about
