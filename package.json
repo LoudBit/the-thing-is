@@ -19,6 +19,6 @@
   "readmeFilename": "README.md",
   "gitHead": "adb81e723ae719a2cc21f9a91103d5acd783f0fd",
   "dependencies": {
-    "is-it": "~1.1.0"
+    "is-too": "^2.0.0"
   }
 }
