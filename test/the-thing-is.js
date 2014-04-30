@@ -63,9 +63,9 @@ describe("expectations array", function(){
       assert.equal(the(0).is(['string']), false)
     })
   })
-  describe("the('0').is(['string', 'aNumber', 'aInteger'])", function() {
+  describe("the('0').is(['string', 'numberString', 'integerString'])", function() {
     it('returns true', function() {
-      assert.equal(the('0').is(['string', 'aNumber', 'aInteger']), true)
+      assert.equal(the('0').is(['string', 'numberString', 'integerString']), true)
     })
   })
   describe("the('0').is(['string', 'number', 'integer'])", function() {
@@ -101,12 +101,12 @@ describe("expectations against a standard", function(){
   describe("a complex expectation that passes", function(){
     it('passes all the conditions', function(){
       var whatIExpect = [
-        'string', 'aInteger',
+        'string', 'integerString',
         {
           // this is a trick - `number:false` is true
           // because `number` isn't a check against a standard
           number: false,
-          aInteger: true,
+          integerString: true,
           gte: 0,
           lte: 100
         }
@@ -117,7 +117,7 @@ describe("expectations against a standard", function(){
   })
   describe("a complex expectation that's not met", function(){
     it("doesn't meet the expectations", function(){
-      the('0').is(['string', 'aInteger', {gte:0, lte:100}])
+      the('0').is(['string', 'integerString', {gte:0, lte:100}])
       assert( the.last.error.length )
     })
     it("sets a meaningful (enough) error message", function(){
