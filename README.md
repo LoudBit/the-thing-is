@@ -2,7 +2,7 @@
 
 Configuration Driven Validation with a cute name.
 
-Uses [`is-it`](https://github.com/mrDarcyMurphy/is) behind the scenes for the comparisons.
+Uses [`is-too`](https://github.com/LoudBit/is-too) behind the scenes for the comparisons.
   
 ``` javascript
 
@@ -18,6 +18,6 @@ if (the(thing).is(whatYouExpect)) {
 }
 
 if (the(thing).isnt(whatYouExpect)) {
-  throwSomething(the.last.error)
+  throw the.last.error
 }
 ```
