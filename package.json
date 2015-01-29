@@ -4,7 +4,7 @@
   "description": "Configuration drivin validation",
   "main": "the-thing-is.js",
   "scripts": {
-    "test": "mocha -R spec test/the-thing-is.js"
+    "test": "mocha -R spec"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,8 @@
   "gitHead": "adb81e723ae719a2cc21f9a91103d5acd783f0fd",
   "dependencies": {
     "is-too": "^2.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.1.0"
   }
 }
