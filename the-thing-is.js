@@ -18,6 +18,8 @@
 //   throwSomething()
 // }
 
+'use strict'
+
 // Dependencies
 var is = require('is-too')
 
@@ -37,7 +39,7 @@ the.last = null
 
 // is, isnt
 var comparisons = {
-  is: function(whatYouExpect) {
+  is: function (whatYouExpect) {
 
     var its = true
     var expectation = null
@@ -59,7 +61,7 @@ var comparisons = {
     // the(thing).is(['present', 'integer'])
     else
       if ( is.array(whatYouExpect) )
-        for (var i = 0; i < whatYouExpect.length && its == true; i++) {
+        for (var i = 0; i < whatYouExpect.length && its === true; i++) {
           expectation = whatYouExpect[i]
           if (is.string(expectation))
             its = booleanCheck(expectation)
@@ -87,7 +89,7 @@ function booleanCheck(expectation) {
   if (is[expectation])
     return is[expectation](the.last.thing)
   else
-    throw new TypeError("`"+expectation+"` isn't a valid comparison method.")
+    throw new TypeError('` ' + expectation + '` isn\'t a valid comparison method.')
 }
 
 function subjectCheck(expectation) {
@@ -96,7 +98,7 @@ function subjectCheck(expectation) {
   // loop through the keys in the object to
   Object.keys(expectation).forEach(function(key, value){
     if ( !is[key] )
-      throw new TypeError("`"+key+"` isn't a valid comparison method.")
+      throw new TypeError('`' + key + '` isn\'t a valid comparison method.')
 
     if ( is[key](the.last.thing, expectation[key]) ) {
       the.last.error.push(['See, the thing is, ', the.last.thing, ' (', typeof the.last.thing, ') isn\'t ', key, ' ', value, '.'].join(''));
