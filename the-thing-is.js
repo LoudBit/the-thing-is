@@ -39,49 +39,60 @@ the.last = null
 
 // is, isnt
 var comparisons = {
-  is: function (whatYouExpect) {
-
-    var its = true
-    var expectation = null
-
-    // the(thing).is()
-    // whatYouExpect is undefined or null -- so check mere presence of a thing
-    if ( is.not.present(whatYouExpect) )
-      its = is.present(the.last.thing)
-
-    // 'present' -- single boolean check
-    // the(thing).is('integer') // true/false
-    // the(thing).is('borkborkbork') // throw
-    else
-      if ( is.string(whatYouExpect) )
-        its = booleanCheck(whatYouExpect)
-
-
-    // ['present', 'number'] -- array of boolean
-    // the(thing).is(['present', 'integer'])
-    else
-      if ( is.array(whatYouExpect) )
-        for (var i = 0; i < whatYouExpect.length && its === true; i++) {
-          expectation = whatYouExpect[i]
-          if (is.string(expectation))
-            its = booleanCheck(expectation)
-          else
-            its = subjectCheck(expectation)
-
-          if (!its)
-            the.last.error = '' + the.last.thing + ' is not ' + whatYouExpect[i];
-        }
-
-    // {greaterThan:0} -- configuration object with single condition
-    // {present:true, integer:true, greaterThan:0} -- unreliable due to unreliable hash key order
-    // [{present:true}, {integer:true}, {greaterThan:0}] -- reliable, but verbose
-    // ['present', 'integer', {greaterThanOrEqualTo:0}] -- preferred
-
-    return its
-  },
+  is: checkExpectations,
   isnt: function(whatYouExpect) {
     return !this.is(whatYouExpect)
   }
+}
+
+// recursive method of checking the expectations defined by the user
+function checkExpectations(whatYouExpect) {
+
+  var its = true
+  var expectation = null
+
+  // the(thing).is()
+  // whatYouExpect is undefined or null -- so check mere presence of a thing
+  if ( is.not.present(whatYouExpect) )
+    its = is.present(the.last.thing)
+
+  // 'present' -- single boolean check
+  // the(thing).is('integer') // true/false
+  // the(thing).is('borkborkbork') // throw
+  else
+    if ( is.string(whatYouExpect) )
+      its = booleanCheck(whatYouExpect)
+
+
+  // ['present', 'number'] -- array of boolean
+  // the(thing).is(['present', 'integer'])
+  else
+    if ( is.array(whatYouExpect) )
+      whatYouExpect.every(function(expectation){
+        if (is.string(expectation))
+          its = booleanCheck(expectation)
+        else
+          its = subjectCheck(expectation)
+        if (!its)
+          the.last.error = '' + the.last.thing + ' is not ' + expectation;
+        return its
+      })
+
+  else
+    if ( is.plainObject(whatYouExpect) ) {
+      Object.keys(whatYouExpect).some(function(key){
+        return checkExpectations(whatYouExpect[key])
+      })
+    }
+  // {
+  //   foo: ['string', oneOf: ['foo', 'bar']],
+  //   bar: {
+  //     fizz: ['string', oneOf: ['fizz', 'buzz', 'fizzbuzz']]
+  //   },
+  //   baz: ['string']
+  // }
+
+  return its
 }
 
 // simple yes/no type comparisons against an expectation
@@ -91,6 +102,7 @@ function booleanCheck(expectation) {
   else
     throw new TypeError('` ' + expectation + '` isn\'t a valid comparison method.')
 }
+
 
 function subjectCheck(expectation) {
   the.last.error = []
