@@ -1,17 +1,17 @@
 // The Thing Is
-// Configuration driven validation
-// with the goal of a near-english syntax (for consumers)
-
+//
+// Detailed Comparisons of Objects against Descriptions
+// ...with a sort of _artistic_ quality of code
+//
 // Usage:
 //
 // var whatYouExpect = 'number'  --  string (least useful)
 // var whatYouExpect = ['present', 'number', {greaterThan:0}] -- array (tightest to write, preferred?)
 // var whatYouExpect = ['present', 'integer', {greaterThan:0, lessThan:256}] -- combo v2, maintains order, groups comparisons that are chaotic
-// var whatYouExpect = {present:true, number:true, greaterThan:0} -- object (verbose, unreliable order)
-// var whatYouExpect = [{present:true}, {number:true}, {greaterThan:0}] -- array of objects (very verbose, reliable order)
+// var whatYouExpect = [{present:true}, {number:true}, {greaterThan:0}] -- array of objects (very verbose, reliable order, overkill)
 //
 // if (the(thing).is(whatYouExpect)) {
-//   fuckYeah()
+//   ohYeah()
 // }
 //
 // if (the(thing).isnt(whatYouExpect)) {
@@ -26,64 +26,64 @@ var is = require('is-too')
 
 // the -- function you care about
 function the(thing) {
+  the.past = the.past || []
   the.past.push({
     thing:  thing,
     errors: []
   })
-  the.last = the.past[the.past.length-1 || 0]
-  return comparisons
+  the.last = the.past[Math.max(the.past.length-1, 0)]
+  return isAndIsnt
 }
 
-the.past = []
-the.last = null
 
 // is, isnt
-var comparisons = {
-  is: checkExpectations,
-  isnt: function(whatYouExpect) {
-    return !this.is(whatYouExpect)
+var isAndIsnt = {
+  is: whatItIs,
+  isnt: function(whatYouExpect, thing) {
+    return !this.is(whatYouExpect, thing)
   }
 }
 
-// recursive method of checking the expectations defined by the user
-function checkExpectations(whatYouExpect, subject) {
+
+// will recursively compare the thing against the provided description
+function whatItIs(whatYouExpect, thing) {
 
   var its = true
-
-  subject = subject || the.last.thing
+  thing = thing || the.last.thing
 
   // the(thing).is()
   // whatYouExpect is undefined or null -- so check mere presence of a thing
   if ( is.not.present(whatYouExpect) )
-    its = is.present(the.last.thing)
+    its = is.present(thing)
 
   // 'present' -- single boolean check
   // the(thing).is('integer') // true/false
   // the(thing).is('borkborkbork') // throw
   else
     if ( is.string(whatYouExpect) )
-      its = booleanCheck(whatYouExpect, subject)
+      its = check(whatYouExpect, thing) // to be
 
 
-  // ['present', 'number'] -- array of boolean
+  // ['present', 'number'] -- array of boolean comparisons
   // the(thing).is(['present', 'integer'])
   else
     if ( is.array(whatYouExpect) )
-      whatYouExpect.every(function(expectation){
-        if (is.string(expectation))
-          its = booleanCheck(expectation, subject)
+      whatYouExpect.every(function(expected){
+        if (is.string(expected))
+          its = check(expected, thing)
         else
-          its = subjectCheck(expectation, subject)
+          its = measure(expected, thing)
         if (!its)
-          the.last.error = '' + subject + ' is not ' + expectation;
+          the.last.error = '' + thing + ' is not ' + expected;
         return its
       })
 
-  // potentially deeply nested objects
+  // { foo: ['bar'] } -- dictionary describing complex or deep objects
+  // the(thing).is({ name: ['present', 'string'], address: { street: 'string', city: 'string', state: 'string', zip: 'string' })
   else
     if ( is.plainObject(whatYouExpect) ) {
       its = Object.keys(whatYouExpect).every(function(key){
-        return checkExpectations(whatYouExpect[key], subject[key]);
+        return whatItIs(whatYouExpect[key], thing[key]);
       })
     }
 
@@ -91,26 +91,23 @@ function checkExpectations(whatYouExpect, subject) {
 }
 
 // simple yes/no type comparisons against an expectation
-function booleanCheck(expectation, subject) {
-  subject = subject || the.last.thing
-  if (is[expectation])
-    return is[expectation](subject)
+function check(expected, thing) {
+  if (is[expected])
+    return is[expected](thing)
   else
-    throw new TypeError('` ' + expectation + '` isn\'t a valid comparison method.')
+    throw new TypeError('` ' + expected + '` isn\'t a valid comparison method.')
 }
 
 
-function subjectCheck(expectation, subject) {
-  subject = subject || the.last.thing
+function measure(expected, thing) {
   the.last.error = []
 
   // loop through the keys in the object to
-  Object.keys(expectation).forEach(function(key, value){
+  Object.keys(expected).forEach(function(key, value){
     if ( !is[key] )
       throw new TypeError('`' + key + '` isn\'t a valid comparison method.')
-
-    if ( is[key](subject, expectation[key]) ) {
-      the.last.error.push(['See, the thing is, ', subject, ' (', typeof subject, ') isn\'t ', key, ' ', value, '.'].join(''));
+    if ( is[key](thing, expected[key]) ) {
+      the.last.error.push(['See, the thing is, ', thing, ' (', typeof thing, ') isn\'t ', key, ' ', value, '.'].join(''));
     }
   })
 
