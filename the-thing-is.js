@@ -1,6 +1,6 @@
 // The Thing Is
 //
-// Detailed Comparisons of Objects against Descriptions
+// Detailed Object Descriptions
 // ...with a sort of _artistic_ quality of code
 //
 // Usage:
