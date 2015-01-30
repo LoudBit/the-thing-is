@@ -162,3 +162,23 @@ describe('the(thing).isnt', function() {
     })
   })
 })
+
+describe('testing objects', function() {
+
+  describe('{foo:"bar"}', function() {
+    var subject = { foo: "bar" }
+    it('is("plainObject")', function() {
+      assert.equal(the(subject).is({ foo: "string" }), true)
+    })
+    it('is(["plainObject"])', function() {
+      assert.equal(the(subject).is({ foo: "string" }), true)
+    })
+    it('is({foo:"string"})', function() {
+      assert.equal(the(subject).is({ foo: "string" }), true)
+    })
+    it('is({foo:["string"]})', function() {
+      assert.equal(the(subject).is({ foo: ["string"] }), true)
+    })
+  })
+
+})
