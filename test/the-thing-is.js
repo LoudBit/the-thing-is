@@ -179,6 +179,70 @@ describe('testing objects', function() {
     it('is({foo:["string"]})', function() {
       assert.equal(the(subject).is({ foo: ["string"] }), true)
     })
+    it('is({bar:["string"]}) == false', function() {
+      assert.equal(the(subject).is({ bar:["string"] }), false)
+    })
+    it('isnt({bar:["string"]})', function() {
+      assert.equal(the(subject).isnt({ bar:["string"] }), true)
+    })
+  })
+
+
+  describe('{ foo:"bar", bar:"fizz", baz:666 }', function() {
+    var subject = {
+      foo: 'bar',
+      bar: 'fizz',
+      baz: 666
+    }
+    it('is("plainObject")', function() {
+      assert.equal(the(subject).is('plainObject'), true)
+    })
+    it('is({ foo:"string", bar:"string", baz:["number", {greaterThan:0}, {lessThan:777}] })', function() {
+      assert.equal(the(subject).is({
+        foo: 'string',
+        bar: 'string',
+        baz: ['number', {greaterThan:0}, {lessThan:777}]
+      }), true)
+    })
+    it('isnt({ flop:"string", bar:"string", baz:["number", {greaterThan:0}, {lessThan:777}] })', function() {
+      assert.equal(the(subject).isnt({
+        flop: 'string',
+        bar: 'string',
+        baz: ['number', {greaterThan:0}, {lessThan:777}]
+      }), true)
+    })
+    it('isnt({ foo:"string", bar:"string", baz:["number", {greaterThan:666}] })', function() {
+      assert.equal(the(subject).isnt({
+        foo: 'string',
+        bar: 'string',
+        baz: ['number', {greaterThan:666}]
+      }), true)
+    })
+  })
+
+
+  describe('{foo: {bar: {baz: {buz: "fiz"}}}}', function() {
+    var subject = {
+      foo: {
+        bar: {
+          baz: {
+            buz: 'fiz'
+          }
+        }
+      }
+    }
+    it('is("plainObject")', function() {
+      assert.equal(the(subject).is('plainObject'), true)
+    })
+    it('is({foo: {bar: {baz: {buz: ["string"]}}}})', function() {
+      assert.equal(the(subject).is({foo: {bar: {baz: {buz: ['string']}}}}), true)
+    })
+    it('isnt({foo: {bar: {baz: {buz: ["number"]}}}}) - wrong type', function() {
+      assert.equal(the(subject).isnt({foo: {bar: {baz: {buz: ['number']}}}}), true)
+    })
+    it('isnt({foo: {bar: {baz: {buz: {fiz: ["string"]}}}}}) - nested too deep', function() {
+      assert.equal(the(subject).isnt({foo: {bar: {baz: {buz: {fiz: ['string']}}}}}), true)
+    })
   })
 
 })
