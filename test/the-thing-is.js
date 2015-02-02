@@ -80,7 +80,7 @@ describe("expectations array", function(){
 
 describe("expectations against a standard", function(){
 
-  describe("a test of a standard that doesn't exist", function(){
+  describe("the(0).is([{gonnaGetThrown:true}])", function(){
     it("should throw an error", function(){
       var whatIExpect = [{gonnaGetThrown:true}]
       assert.throws(function(){
@@ -89,7 +89,7 @@ describe("expectations against a standard", function(){
     })
   })
 
-  describe("an incorrect test of a standard", function(){
+  describe("the('0').is([{number:'wrong'}])", function(){
     it("shouldn't throw an error", function(){
       var whatIExpect = [{number:'wrong'}]
       assert.doesNotThrow(function(){
@@ -112,13 +112,13 @@ describe("expectations against a standard", function(){
         }
       ]
       assert( the('0').is(whatIExpect) )
-      assert( the.last.error.length )
+      // assert( the.last.error.length )
     })
   })
   describe("a complex expectation that's not met", function(){
     it("doesn't meet the expectations", function(){
-      the('0').is(['string', 'integerString', {gte:0, lte:100}])
-      assert( the.last.error.length )
+      assert( !the('0').is(['string', 'integerString', {gte:0, lte:100}]) )
+      // assert( the.last.error.length )
     })
     it("sets a meaningful (enough) error message", function(){
       assert.equal( the.last.error[0], "See, the thing is, 0 (string) isn't gte 0.")
@@ -246,3 +246,5 @@ describe('testing objects', function() {
   })
 
 })
+
+

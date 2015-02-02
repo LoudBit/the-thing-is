@@ -25,90 +25,108 @@ var is = require('is-too')
 
 
 // the -- function you care about
-function the(thing) {
-  the.past = the.past || []
-  the.past.push({
-    thing:  thing,
-    errors: []
-  })
-  the.last = the.past[Math.max(the.past.length-1, 0)]
-  return isAndIsnt
-}
-
-
-// is, isnt
-var isAndIsnt = {
-  is: whatItIs,
-  isnt: function(whatYouExpect, thing) {
-    return !this.is(whatYouExpect, thing)
+function the (thing) {
+  the.last = {
+    thing: thing,
+    outcome: {}
+  }
+  return {
+    is: what,
+    isnt: function (expected, thing) {
+      return !this.is(expected, thing)
+    }
   }
 }
 
+// GOAL: `see` and `what` are the only methods
+// GOAL: able to create a valid outcome mapping along the way
 
 // will recursively compare the thing against the provided description
-function whatItIs(whatYouExpect, thing) {
+function what (expected, thing) {
 
-  var its = true
   thing = thing || the.last.thing
 
   // the(thing).is()
-  // whatYouExpect is undefined or null -- so check mere presence of a thing
-  if ( is.not.present(whatYouExpect) )
-    its = is.present(thing)
+  // expected is undefined or null -- so check mere presence of a thing
+  if ( is.not.present(expected) )
+    return see('present', thing)
 
   // 'present' -- single boolean check
   // the(thing).is('integer') // true/false
   // the(thing).is('borkborkbork') // throw
   else
-    if ( is.string(whatYouExpect) )
-      its = check(whatYouExpect, thing) // to be
+    if ( is.string(expected) )
+      return see(expected, thing)
 
 
   // ['present', 'number'] -- array of boolean comparisons
+  // ['present', 'number', {greaterThan:0}, {lessThanorEqualTo:100}] -- separated objects
+  // ['present', 'number', {greaterThan:0, lessThanorEqualTo:100}] -- combined object
+  // { foo: ['present', { bar: ['present'] }] }
   // the(thing).is(['present', 'integer'])
   else
-    if ( is.array(whatYouExpect) )
-      whatYouExpect.every(function(expected){
+    if ( is.array(expected) )
+      return expected.every(function(expected){
+        // what(expected, thing) // can this recursive function be further reduced?
         if (is.string(expected))
-          its = check(expected, thing)
-        else
-          its = measure(expected, thing)
-        if (!its)
-          the.last.error = '' + thing + ' is not ' + expected;
-        return its
+          return see(expected, thing)
+        else // I still think that from here on down it should be `what` being called
+          if (is.plainObject(expected))
+            if (is[expected])
+              return see(expected, thing)
+            else
+              return what(expected, thing)
       })
 
   // { foo: ['bar'] } -- dictionary describing complex or deep objects
-  // the(thing).is({ name: ['present', 'string'], address: { street: 'string', city: 'string', state: 'string', zip: 'string' })
+  // the(thing).is({
+  //   name: ['present', 'string'],
+  //   address: {
+  //     street: 'string',
+  //     city: 'string',
+  //     state: 'string',
+  //     zip: 'string'
+  //   }
+  // })
   else
-    if ( is.plainObject(whatYouExpect) ) {
-      its = Object.keys(whatYouExpect).every(function(key){
-        return whatItIs(whatYouExpect[key], thing[key]);
+    if ( is.plainObject(expected) ) {
+      return Object.keys(expected).every(function(key){
+        return what(expected[key], thing[key]);
       })
     }
 
-  return its
 }
 
 // simple yes/no type comparisons against an expectation
-function check(expected, thing) {
-  if (is[expected])
-    return is[expected](thing)
+function see (expected, thing, standard) {
+  if ( is.string(expected) )
+    if ( !is[expected] )
+      throw new TypeError('`' + expected + '` isn\'t a valid comparison method.')
+    else
+      return is[expected](thing, standard)
   else
-    throw new TypeError('` ' + expected + '` isn\'t a valid comparison method.')
+    if ( is.plainObject(expected) )
+      return Object.keys(expected).every(function(key, standard){
+        if ( !is[expected] )
+          throw new TypeError('`' + expected + '` isn\'t a valid comparison method.')
+        return is[expected](thing, standard)
+      })
 }
 
 
-function measure(expected, thing) {
+function measure (expected, thing) {
   the.last.error = []
 
   // loop through the keys in the object to
   Object.keys(expected).forEach(function(key, value){
-    if ( !is[key] )
-      throw new TypeError('`' + key + '` isn\'t a valid comparison method.')
-    if ( is[key](thing, expected[key]) ) {
+    // if ( !is[key] )
+      // throw new TypeError('`' + key + '` isn\'t a valid comparison method.')
+
+    // if ( is[key](thing, expected[key]) ) {
+    if (!see(key, thing, expected[key]))
       the.last.error.push(['See, the thing is, ', thing, ' (', typeof thing, ') isn\'t ', key, ' ', value, '.'].join(''));
-    }
+    // }
+
   })
 
   return !!the.last.error.length
