@@ -1,3 +1,5 @@
+'use strict'
+
 var assert = require('assert')
 var the = require('../the-thing-is')
 
@@ -34,10 +36,10 @@ describe('basic checks', function(){
     it('returns true', function() {
       assert.equal(the(0).is('integer'), true)
     })
-    it("doesn't set an error", function() {
-      assert(the.last.thing === 0)
-      assert(!the.last.error)
-    })
+    // it("doesn't set an error", function() {
+    //   assert(the.last.thing === 0)
+    //   assert(!the.last.error)
+    // })
   })
   describe("the('thing').is('gonnaGetThrown')", function() {
     it('throws a TypeError', function() {
@@ -45,10 +47,10 @@ describe('basic checks', function(){
         the('thing').is('gonnaGetThrown')
       }, TypeError)
     })
-    it("doesn't set an error", function() {
-      assert.equal(the.last.thing, 'thing')
-      assert(!the.last.error)
-    })
+    // it("doesn't set an error", function() {
+    //   assert.equal(the.last.thing, 'thing')
+    //   assert(!the.last.error)
+    // })
   })
 })
 
@@ -72,9 +74,9 @@ describe("expectations array", function(){
     it('returns false', function() {
       assert.equal(the('0').is(['string', 'number', 'integer']), false)
     })
-    it('sets the.last.error', function() {
-      assert(the.last.error)
-    })
+    // it('sets the.last.error', function() {
+    //   assert(the.last.error)
+    // })
   })
 })
 
@@ -112,17 +114,15 @@ describe("expectations against a standard", function(){
         }
       ]
       assert( the('0').is(whatIExpect) )
-      // assert( the.last.error.length )
     })
   })
   describe("a complex expectation that's not met", function(){
     it("doesn't meet the expectations", function(){
       assert( !the('0').is(['string', 'integerString', {gte:0, lte:100}]) )
-      // assert( the.last.error.length )
     })
-    it("sets a meaningful (enough) error message", function(){
-      assert.equal( the.last.error[0], "See, the thing is, 0 (string) isn't gte 0.")
-    })
+    // it("sets a meaningful (enough) error message", function(){
+    //   assert.equal( the.last.error[0], "See, the thing is, 0 (string) isn't gte 0.")
+    // })
   })
 })
 
@@ -156,10 +156,10 @@ describe('the(thing).isnt', function() {
         the('thing').isnt('gonnaGetThrown')
       }, TypeError)
     })
-    it("doesn't set an error", function() {
-      assert.equal(the.last.thing, 'thing')
-      assert(!the.last.error)
-    })
+    // it("doesn't set an error", function() {
+    //   assert.equal(the.last.thing, 'thing')
+    //   assert(!the.last.error)
+    // })
   })
 })
 
