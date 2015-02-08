@@ -54,9 +54,8 @@ function what (expected, thing) {
   // 'present' -- single boolean check
   // the(thing).is('integer') // true/false
   // the(thing).is('borkborkbork') // throw
-  else
-    if ( is.string(expected) )
-      return see(expected, thing)
+  if ( is.string(expected) )
+    return see(expected, thing)
 
 
   // ['present', 'number'] -- array of boolean comparisons
@@ -64,19 +63,10 @@ function what (expected, thing) {
   // ['present', 'number', {greaterThan:0, lessThanorEqualTo:100}] -- combined object
   // { foo: ['present', { bar: ['present'] }] }
   // the(thing).is(['present', 'integer'])
-  else
-    if ( is.array(expected) )
-      return expected.every(function(expected){
-        // what(expected, thing) // can this recursive function be further reduced?
-        if (is.string(expected))
-          return see(expected, thing)
-        else // I still think that from here on down it should be `what` being called
-          if (is.plainObject(expected))
-            if (is[expected])
-              return see(expected, thing)
-            else
-              return what(expected, thing)
-      })
+  if ( is.array(expected) )
+    return expected.every(function(expected){
+      return what(expected, thing)
+    })
 
   // { foo: ['bar'] } -- dictionary describing complex or deep objects
   // the(thing).is({
@@ -88,48 +78,30 @@ function what (expected, thing) {
   //     zip: 'string'
   //   }
   // })
-  else
-    if ( is.plainObject(expected) ) {
-      return Object.keys(expected).every(function(key){
-        return what(expected[key], thing[key]);
+  if ( is.plainObject(expected) )
+    if (is.plainObject(thing))
+      return Object.keys(expected).every(function(key, i, arr){
+        var nexThing = thing[key]
+        var nexPectation = expected[key]
+        if ( is.present(nexPectation) && is.present(nexThing) )
+          return what(nexPectation, nexThing)
       })
-    }
+    else
+      return Object.keys(expected).every(function(key, i, arr){
+        var standard = expected[key];
+        return see(key, thing, standard);
+      })
+
+  return false;
 
 }
 
 // simple yes/no type comparisons against an expectation
 function see (expected, thing, standard) {
-  if ( is.string(expected) )
-    if ( !is[expected] )
-      throw new TypeError('`' + expected + '` isn\'t a valid comparison method.')
-    else
-      return is[expected](thing, standard)
+  if ( is.not.string(expected) || is.not.present(is[expected]) )
+    throw new TypeError('`' + expected + '` isn\'t a valid comparison method.')
   else
-    if ( is.plainObject(expected) )
-      return Object.keys(expected).every(function(key, standard){
-        if ( !is[expected] )
-          throw new TypeError('`' + expected + '` isn\'t a valid comparison method.')
-        return is[expected](thing, standard)
-      })
-}
-
-
-function measure (expected, thing) {
-  the.last.error = []
-
-  // loop through the keys in the object to
-  Object.keys(expected).forEach(function(key, value){
-    // if ( !is[key] )
-      // throw new TypeError('`' + key + '` isn\'t a valid comparison method.')
-
-    // if ( is[key](thing, expected[key]) ) {
-    if (!see(key, thing, expected[key]))
-      the.last.error.push(['See, the thing is, ', thing, ' (', typeof thing, ') isn\'t ', key, ' ', value, '.'].join(''));
-    // }
-
-  })
-
-  return !!the.last.error.length
+    return is[expected](thing, standard)
 }
 
 
