@@ -36,10 +36,10 @@ describe('basic checks', function(){
     it('returns true', function() {
       assert.equal(the(0).is('integer'), true)
     })
-    // it("doesn't set an error", function() {
-    //   assert(the.last.thing === 0)
-    //   assert(!the.last.error)
-    // })
+    it("doesn't set an error", function() {
+      assert(the.last.thing === 0)
+      assert(!the.last.error)
+    })
   })
   describe("the('thing').is('gonnaGetThrown')", function() {
     it('throws a TypeError', function() {
@@ -47,10 +47,10 @@ describe('basic checks', function(){
         the('thing').is('gonnaGetThrown')
       }, TypeError)
     })
-    // it("doesn't set an error", function() {
-    //   assert.equal(the.last.thing, 'thing')
-    //   assert(!the.last.error)
-    // })
+    it("doesn't set an error", function() {
+      assert.equal(the.last.thing, 'thing')
+      assert(!the.last.error)
+    })
   })
 })
 
@@ -74,9 +74,9 @@ describe("expectations array", function(){
     it('returns false', function() {
       assert.equal(the('0').is(['string', 'number', 'integer']), false)
     })
-    // it('sets the.last.error', function() {
-    //   assert(the.last.error)
-    // })
+    it('sets the.last.wasnt', function() {
+      assert.deepEqual(the.last.wasnt, ['number'])
+    })
   })
 })
 
@@ -117,9 +117,11 @@ describe("expectations against a standard", function(){
     })
     it(".isnt([{ equal: 1 }])", function(){
       assert( the('0').isnt([{ equal: 1 }]) )
+      assert.deepEqual( the.last.wasnt, [{equal:'1'}])
     })
     it(".isnt([{ equal: '1' }])", function(){
       assert( the('0').isnt([{ equal: '1' }]) )
+      assert.deepEqual( the.last.wasnt, [{equal:'1'}])
     })
   })
   describe("the('101')", function(){
@@ -131,9 +133,9 @@ describe("expectations against a standard", function(){
         }]
       assert( the('101').isnt(whatIExpect), false )
     })
-    // it("sets a meaningful (enough) error message", function(){
-    //   assert.equal( the.last.error, "")
-    // })
+    it("creates a meaningful error array", function(){
+      assert.deepEqual( the.last.wasnt, [{lte:100}])
+    })
   })
 })
 
@@ -167,10 +169,10 @@ describe('the(thing).isnt', function() {
         the('thing').isnt('gonnaGetThrown')
       }, TypeError)
     })
-    // it("doesn't set an error", function() {
-    //   assert.equal(the.last.thing, 'thing')
-    //   assert(!the.last.error)
-    // })
+    it("doesn't set an error", function() {
+      assert.equal(the.last.thing, 'thing')
+      assert(!the.last.error)
+    })
   })
 })
 
@@ -255,6 +257,55 @@ describe('testing objects', function() {
       }, TypeError)
     })
   })
+
+  describe('{foo: {bar: {baz: {buz: "fiz"}}}}', function() {
+    var subject = {
+      fo: {
+        foo: {
+          fooo: 'fooo'
+        },
+        oof: {
+          ooof: 'ooof'
+        }
+      },
+      bar: {
+        baz: {
+          buz: 'buz'
+        },
+        rab: {
+          zub: 'zub'
+        },
+        zab: 'zab'
+      }
+    }
+
+    it('is("plainObject")', function() {
+      assert.equal(the(subject).is('plainObject'), true)
+    })
+    it('is({foo: {bar: {baz: {buz: ["string"]}}}})', function() {
+      var whatIExpect = {
+        fo: {
+          foo: {
+            fooo: 'string'
+          },
+          oof: {
+            ooof: 'string'
+          }
+        },
+        bar: {
+          baz: {
+            buz: 'string'
+          }
+        }
+      }
+      assert.equal(the(subject).is(whatIExpect), true)
+    })
+    it('isnt({foo: {bar: {baz: {buz: ["number"]}}}}) - foo not at top level', function() {
+      assert.equal(the(subject).isnt({foo: {bar: {baz: {buz: ['number']}}}}), true)
+      assert.deepEqual(the.last.wasnt, [{'foo':'present'}])
+    })
+  })
+
 
 })
 
