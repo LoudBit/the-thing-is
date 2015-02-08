@@ -23,12 +23,12 @@
 // Dependencies
 var is = require('is-too')
 
-
 // the -- function you care about
 function the (thing) {
+  the.path = []
   the.last = {
     thing: thing,
-    outcome: {}
+    wasnt: []
   }
   return {
     is: what,
@@ -38,10 +38,8 @@ function the (thing) {
   }
 }
 
-// GOAL: `see` and `what` are the only methods
-// GOAL: able to create a valid outcome mapping along the way
 
-// will recursively compare the thing against the provided description
+// will recursively see if the(thing).is(whatYouExpect)
 function what (expected, thing) {
 
   thing = thing || the.last.thing
@@ -79,13 +77,29 @@ function what (expected, thing) {
   //   }
   // })
   if ( is.plainObject(expected) )
-    if (is.plainObject(thing))
-      return Object.keys(expected).every(function(key, i, arr){
+    if (is.plainObject(thing)) {
+
+      // stash the path to branch the tree
+      var pathStash = the.path.slice()
+
+      var result = Object.keys(expected).every(function(key, i){
         var nexThing = thing[key]
         var nexPectation = expected[key]
+
+        if (i > 0)
+          the.path.pop()
+
+        the.path.push(key)
+
         if ( is.present(nexPectation) && is.present(nexThing) )
           return what(nexPectation, nexThing)
+        else
+          return see('present', nexThing)
       })
+
+      the.path = pathStash.slice();
+      return result
+    }
     else
       return Object.keys(expected).every(function(key, i, arr){
         var standard = expected[key];
@@ -96,12 +110,30 @@ function what (expected, thing) {
 
 }
 
-// simple yes/no type comparisons against an expectation
+
 function see (expected, thing, standard) {
+  var wasnt = {}
+  var err = {}
+
   if ( is.not.string(expected) || is.not.present(is[expected]) )
     throw new TypeError('`' + expected + '` isn\'t a valid comparison method.')
+
+  if ( is[expected](thing, standard) )
+    return true
+
+  if ( is.present(standard) )
+    err[expected] = standard
   else
-    return is[expected](thing, standard)
+    err = expected
+
+  if (the.path.length)
+    wasnt[the.path.join('.')] = err
+  else
+    wasnt = err
+
+  the.last.wasnt.push(wasnt)
+
+  return false
 }
 
 
