@@ -1,7 +1,7 @@
 {
   "name": "the-thing-is",
-  "version": "0.4.0",
-  "description": "Configuration drivin validation",
+  "version": "0.4.1",
+  "description": "Thoroughly measure subjects against a series of standards.",
   "main": "the-thing-is.js",
   "scripts": {
     "test": "mocha -R spec"
@@ -11,7 +11,7 @@
     "url": "git://github.com/LoudBit/the-thing-is.git"
   },
   "keywords": [
-    "is-it",
+    "is-too",
     "validation"
   ],
   "author": "Mr. Darcy Murphy",
