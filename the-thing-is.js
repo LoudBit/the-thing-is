@@ -28,7 +28,7 @@ function the (thing) {
   the.path = []
   the.last = {
     thing: thing,
-    wasnt: []
+    error: []
   }
   return {
     is: what,
@@ -62,7 +62,7 @@ function what (expected, thing) {
   // { foo: ['present', { bar: ['present'] }] }
   // the(thing).is(['present', 'integer'])
   if ( is.array(expected) )
-    return expected.every(function(expected){
+    expected.forEach(function(expected){
       return what(expected, thing)
     })
 
@@ -82,9 +82,9 @@ function what (expected, thing) {
       // stash the path to branch the tree
       var pathStash = the.path.slice()
 
-      var result = Object.keys(expected).every(function(key, i){
-        var nexThing = thing[key]
-        var nexPectation = expected[key]
+      Object.keys(expected).forEach(function(key, i){
+        var nexThing = thing[key],
+            nexPectation = expected[key]
 
         if (i > 0)
           the.path.pop()
@@ -98,40 +98,54 @@ function what (expected, thing) {
       })
 
       the.path = pathStash.slice();
-      return result
+
     }
     else
-      return Object.keys(expected).every(function(key, i, arr){
+      Object.keys(expected).forEach(function(key, i, arr){
         var standard = expected[key];
         return see(key, thing, standard);
       })
 
-  return false;
+  return !the.last.error.length;
 
 }
 
 
 function see (expected, thing, standard) {
-  var wasnt = {}
-  var err = {}
+
+  var err = {},
+      fail = {},
+      failPath = the.path.join('.')
 
   if ( is.not.string(expected) || is.not.present(is[expected]) )
     throw new TypeError('`' + expected + '` isn\'t a valid comparison method.')
 
+  // good to go, so go
   if ( is[expected](thing, standard) )
     return true
 
+  // needs to be stored as an object
   if ( is.present(standard) )
-    err[expected] = standard
+    fail[expected] = standard // eg. {greaterThan:0}
   else
-    err = expected
+    fail = expected // eg. 'present'
 
+  // needs to be stored as the value of the path
   if (the.path.length)
-    wasnt[the.path.join('.')] = err
+    err[failPath] = [fail] // eg. {'foo.bar': ['present']}
   else
-    wasnt = err
+    err = fail // eg. 'present'
 
-  the.last.wasnt.push(wasnt)
+  // need to group the fails for a key in the same array
+  var isExisting = the.last.error.some(function something (last) {
+    if (is.plainObject(last) && failPath in last) {
+      last[failPath].push(fail)
+      return true
+    }
+  })
+
+  if (!isExisting)
+    the.last.error.push(err)
 
   return false
 }
