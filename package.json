@@ -19,7 +19,7 @@
   "readmeFilename": "README.md",
   "gitHead": "adb81e723ae719a2cc21f9a91103d5acd783f0fd",
   "dependencies": {
-    "is-too": "^2.0.0"
+    "is-too": "^2.2.0"
   },
   "devDependencies": {
     "mocha": "^2.1.0"
