@@ -1,3 +1,5 @@
+/* jshint quotmark:false */
+/* global describe, it */
 'use strict'
 
 var assert = require('assert')
@@ -38,7 +40,7 @@ describe('basic checks', function(){
     })
     it("doesn't set an error", function() {
       assert(the.last.thing === 0)
-      assert(!the.last.error)
+      assert(!the.last.error.length)
     })
   })
   describe("the('thing').is('gonnaGetThrown')", function() {
@@ -49,7 +51,7 @@ describe('basic checks', function(){
     })
     it("doesn't set an error", function() {
       assert.equal(the.last.thing, 'thing')
-      assert(!the.last.error)
+      assert(!the.last.error.length)
     })
   })
 })
@@ -74,8 +76,8 @@ describe("expectations array", function(){
     it('returns false', function() {
       assert.equal(the('0').is(['string', 'number', 'integer']), false)
     })
-    it('sets the.last.wasnt', function() {
-      assert.deepEqual(the.last.wasnt, ['number'])
+    it('sets the.last.error', function() {
+      assert.deepEqual(the.last.error, ['number', 'integer'])
     })
   })
 })
@@ -117,11 +119,11 @@ describe("expectations against a standard", function(){
     })
     it(".isnt([{ equal: 1 }])", function(){
       assert( the('0').isnt([{ equal: 1 }]) )
-      assert.deepEqual( the.last.wasnt, [{equal:'1'}])
+      assert.deepEqual( the.last.error, [{equal:'1'}])
     })
     it(".isnt([{ equal: '1' }])", function(){
       assert( the('0').isnt([{ equal: '1' }]) )
-      assert.deepEqual( the.last.wasnt, [{equal:'1'}])
+      assert.deepEqual( the.last.error, [{equal:'1'}])
     })
   })
   describe("the('101')", function(){
@@ -134,7 +136,7 @@ describe("expectations against a standard", function(){
       assert( the('101').isnt(whatIExpect), false )
     })
     it("creates a meaningful error array", function(){
-      assert.deepEqual( the.last.wasnt, [{lte:100}])
+      assert.deepEqual( the.last.error, [{lte:100}])
     })
   })
 })
@@ -171,7 +173,7 @@ describe('the(thing).isnt', function() {
     })
     it("doesn't set an error", function() {
       assert.equal(the.last.thing, 'thing')
-      assert(!the.last.error)
+      assert(!the.last.error.length)
     })
   })
 })
@@ -302,7 +304,30 @@ describe('testing objects', function() {
     })
     it('isnt({foo: {bar: {baz: {buz: ["number"]}}}}) - foo not at top level', function() {
       assert.equal(the(subject).isnt({foo: {bar: {baz: {buz: ['number']}}}}), true)
-      assert.deepEqual(the.last.wasnt, [{'foo':'present'}])
+      assert.deepEqual(the.last.error, [{'foo':['present']}])
+    })
+  })
+
+  describe('things with multiple errors', function() {
+    it('report multiple errors', function(){
+      the('thing').is(['number', {greaterThan:0}, {lessThan:1000}])
+      assert.deepEqual( the.last.error, ['number', {greaterThan:0}, {lessThan:1000}])
+    })
+    it('objects report multiple errors too', function(){
+      the({
+        foo: 1,
+        bar: 2,
+        fizz: {
+          buzz: 'fizzbuzz'
+        }
+      }).is({
+        foo: ['number'],
+        bar: ['string'],
+        fizz: {
+          buzz: ['number', {greaterThan:0}]
+        }
+      })
+      assert.deepEqual( the.last.error, [{bar:['string']}, {'fizz.buzz': ['number', {greaterThan:0}]}] )
     })
   })
 
