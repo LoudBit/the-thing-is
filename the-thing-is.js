@@ -23,95 +23,131 @@
 // Dependencies
 var is = require('is-too')
 
-
 // the -- function you care about
-function the(thing) {
-  the.past = the.past || []
-  the.past.push({
-    thing:  thing,
-    errors: []
-  })
-  the.last = the.past[Math.max(the.past.length-1, 0)]
-  return isAndIsnt
-}
-
-
-// is, isnt
-var isAndIsnt = {
-  is: whatItIs,
-  isnt: function(whatYouExpect, thing) {
-    return !this.is(whatYouExpect, thing)
+function the (thing) {
+  the.path = []
+  the.last = {
+    thing: thing,
+    error: []
+  }
+  return {
+    is: what,
+    isnt: function (expected, thing) {
+      return !this.is(expected, thing)
+    }
   }
 }
 
 
-// will recursively compare the thing against the provided description
-function whatItIs(whatYouExpect, thing) {
+// will recursively see if the(thing).is(whatYouExpect)
+function what (expected, thing) {
 
-  var its = true
   thing = thing || the.last.thing
 
   // the(thing).is()
-  // whatYouExpect is undefined or null -- so check mere presence of a thing
-  if ( is.not.present(whatYouExpect) )
-    its = is.present(thing)
+  // expected is undefined or null -- so check mere presence of a thing
+  if ( is.not.present(expected) )
+    return see('present', thing)
 
   // 'present' -- single boolean check
   // the(thing).is('integer') // true/false
   // the(thing).is('borkborkbork') // throw
-  else
-    if ( is.string(whatYouExpect) )
-      its = check(whatYouExpect, thing) // to be
+  if ( is.string(expected) )
+    return see(expected, thing)
 
 
   // ['present', 'number'] -- array of boolean comparisons
+  // ['present', 'number', {greaterThan:0}, {lessThanorEqualTo:100}] -- separated objects
+  // ['present', 'number', {greaterThan:0, lessThanorEqualTo:100}] -- combined object
+  // { foo: ['present', { bar: ['present'] }] }
   // the(thing).is(['present', 'integer'])
-  else
-    if ( is.array(whatYouExpect) )
-      whatYouExpect.every(function(expected){
-        if (is.string(expected))
-          its = check(expected, thing)
-        else
-          its = measure(expected, thing)
-        if (!its)
-          the.last.error = '' + thing + ' is not ' + expected;
-        return its
-      })
+  if ( is.array(expected) )
+    expected.forEach(function(expected){
+      return what(expected, thing)
+    })
 
   // { foo: ['bar'] } -- dictionary describing complex or deep objects
-  // the(thing).is({ name: ['present', 'string'], address: { street: 'string', city: 'string', state: 'string', zip: 'string' })
-  else
-    if ( is.plainObject(whatYouExpect) ) {
-      its = Object.keys(whatYouExpect).every(function(key){
-        return whatItIs(whatYouExpect[key], thing[key]);
+  // the(thing).is({
+  //   name: ['present', 'string'],
+  //   address: {
+  //     street: 'string',
+  //     city: 'string',
+  //     state: 'string',
+  //     zip: 'string'
+  //   }
+  // })
+  if ( is.plainObject(expected) )
+    if (is.plainObject(thing)) {
+
+      // stash the path to branch the tree
+      var pathStash = the.path.slice()
+
+      Object.keys(expected).forEach(function(key, i){
+        var nexThing = thing[key],
+            nexPectation = expected[key]
+
+        if (i > 0)
+          the.path.pop()
+
+        the.path.push(key)
+
+        if ( is.present(nexPectation) && is.present(nexThing) )
+          return what(nexPectation, nexThing)
+        else
+          return see('present', nexThing)
       })
+
+      the.path = pathStash.slice();
+
     }
+    else
+      Object.keys(expected).forEach(function(key, i, arr){
+        var standard = expected[key];
+        return see(key, thing, standard);
+      })
 
-  return its
+  return !the.last.error.length;
+
 }
 
-// simple yes/no type comparisons against an expectation
-function check(expected, thing) {
-  if (is[expected])
-    return is[expected](thing)
+
+function see (expected, thing, standard) {
+
+  var err = {},
+      fail = {},
+      failPath = the.path.join('.')
+
+  if ( is.not.string(expected) || is.not.present(is[expected]) )
+    throw new TypeError('`' + expected + '` isn\'t a valid comparison method.')
+
+  // good to go, so go
+  if ( is[expected](thing, standard) )
+    return true
+
+  // needs to be stored as an object
+  if ( is.present(standard) )
+    fail[expected] = standard // eg. {greaterThan:0}
   else
-    throw new TypeError('` ' + expected + '` isn\'t a valid comparison method.')
-}
+    fail = expected // eg. 'present'
 
+  // needs to be stored as the value of the path
+  if (the.path.length)
+    err[failPath] = [fail] // eg. {'foo.bar': ['present']}
+  else
+    err = fail // eg. 'present'
 
-function measure(expected, thing) {
-  the.last.error = []
-
-  // loop through the keys in the object to
-  Object.keys(expected).forEach(function(key, value){
-    if ( !is[key] )
-      throw new TypeError('`' + key + '` isn\'t a valid comparison method.')
-    if ( is[key](thing, expected[key]) ) {
-      the.last.error.push(['See, the thing is, ', thing, ' (', typeof thing, ') isn\'t ', key, ' ', value, '.'].join(''));
+  // need to group the fails for a key in the same array
+  var isExisting = the.last.error.some(function something (last) {
+    if (is.plainObject(last) && failPath in last) {
+      last[failPath].push(fail)
+      return true
     }
   })
 
-  return !!the.last.error.length
+  if (!isExisting)
+    the.last.error.push(err)
+
+  return false
 }
 
 
