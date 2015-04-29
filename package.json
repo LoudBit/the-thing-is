@@ -1,6 +1,6 @@
 {
   "name": "the-thing-is",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Thoroughly measure subjects against a series of standards.",
   "main": "the-thing-is.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "readmeFilename": "README.md",
   "gitHead": "adb81e723ae719a2cc21f9a91103d5acd783f0fd",
   "dependencies": {
-    "is-too": "2.3.0"
+    "is-too": "~2.4.0"
   },
   "devDependencies": {
     "mocha": "^2.1.0"
