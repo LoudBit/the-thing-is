@@ -77,7 +77,7 @@ function what (expected, thing) {
   //   }
   // })
   if ( is.plainObject(expected) )
-    if (is.plainObject(thing)) {
+    if (is.object(thing)) {
 
       // stash the path to branch the tree
       var pathStash = the.path.slice()
