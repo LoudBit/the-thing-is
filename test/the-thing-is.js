@@ -472,6 +472,22 @@ describe('FALSY VALUES', function () {
       })
     })
   })
+  describe("the(false)", function () {
+    describe(".is('false')", function () {
+      it('returns true', function () {
+        assert(the(false).is('false'))
+      })
+    })
+    describe(".is('present')", function () {
+      it('returns false', function () {
+        assert.equal(the().is('present'), false)
+      })
+      it('sets the correct error', function () {
+        assert(the.last.error.length)
+        assert.deepEqual(the.last.error, ['present'])
+      })
+    })
+  })
   describe('the({ foo:undefined })', function() {
     describe(".is({ foo:'undef' }", function () {
       it('returns true', function () {
