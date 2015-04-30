@@ -331,6 +331,12 @@ describe('testing objects', function() {
     })
   })
 
+  describe('falsy values', function () {
+    it('should return true', function () {
+      var result = the({ foo: undefined }).is({ foo: 'undef' })
+      assert(result, 'the thing is false, should be true.');
+    })
+  })
 
 })
 
