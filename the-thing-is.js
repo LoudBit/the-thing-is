@@ -82,23 +82,28 @@ function what (expected, thing) {
       // stash the path to branch the tree
       var pathStash = the.path.slice()
 
-      Object.keys(expected).forEach(function(key, i){
-        var nexThing = thing[key],
-            nexPectation = expected[key]
+      Object.keys(expected).forEach(function expectedKeys(key, i) {
+
+        var nexPectation, nexThing
 
         if (i > 0)
           the.path.pop()
 
         the.path.push(key)
 
+        if (!thing.hasOwnProperty(key))
+          return see('present', thing[key]);
+
+        nexPectation = expected[key]
+        nexThing = thing[key]
+
         if ( is.present(nexPectation) && is.present(nexThing) )
           return what(nexPectation, nexThing)
         else
-          return see('present', nexThing)
+          return see(nexPectation, nexThing)
       })
 
       the.path = pathStash.slice();
-
     }
     else
       Object.keys(expected).forEach(function(key, i, arr){
@@ -111,6 +116,7 @@ function what (expected, thing) {
 }
 
 
+// see if the expected thing meets the standard
 function see (expected, thing, standard) {
 
   var err = {},
