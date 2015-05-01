@@ -1,7 +1,7 @@
 {
   "name": "the-thing-is",
-  "version": "0.4.4",
-  "description": "Thoroughly measure subjects against a series of standards.",
+  "version": "0.5.0",
+  "description": "Simple tool for doing complex object validation.",
   "main": "the-thing-is.js",
   "scripts": {
     "test": "mocha -R spec"
