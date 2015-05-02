@@ -2,26 +2,14 @@
 
 > _"You see, the thing is..."_
 
-...now you can thoroughly and precisely measure your subjects against a series of standards.
+...now you've got a simple tool for doing complex object validations. It's a bit like [Joi](https://github.com/hapijs/joi), only leaner so it's more suitable for the front-end.
 
-`the('16').is(['present', 'numberString', {greaterThanOrEqualTo:0}]) // true`
+`the-thing-is` uses [`is-too`](https://github.com/LoudBit/is-too) for the comparisons. See its README for a list of what's available.
 
-This thing is _great_ for front-end form validation.
-
-[`is-too`](https://github.com/LoudBit/is-too) does comparisons behind the scenes. `the-thing-is` handles the organization of multiple checks. See `is-too`'s README for a list of what's available.
-
-
-## Basic usage
-
-``` javascript
-var the = require('the-thing-is')
-
-the('thing').is('present') // true
-```
 
 ### Array of Standards
 
-Use an array to describe your subject with a series of attributes that will be evaluated in order.
+If you've got a single variable that needs to be within certain bounds then use an array to describe it with a series of checks that will be evaluated in order.
 
 ``` javascript
 var whatYouExpect = ['present', 'integer', {greaterThan:0, lessThan:256}]
@@ -32,8 +20,8 @@ the(640).is(whatYouExpect) // false
 
 ### Tree of Standards
 
-This is where the true value of `the-thing-is` is. Trees can be as deep as you want, `the-thing-is` works through it recursively.
-Should the check fail, it'll record the path to the offending branch of the tree and store it as an error.
+This is where the true value of `the-thing-is` is. Trees can be as deep as you want, and `the-thing-is` walks through it to check each node.
+Should the check fail, it'll record the path to the offending node on the tree and store it in `the.last.error`.
 
 ``` javascript
 var userSchema = {
@@ -70,6 +58,7 @@ If your subject is like an unruly teenager and you expect it to fail to live up 
 ``` javascript
 var teenager = undefined
 the(teenager).isnt('present') // true
+the.last.thing // undefined
 the.last.error // ['present']
 ```
 
