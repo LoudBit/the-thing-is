@@ -1,8 +1,6 @@
-# the-thing-is
-
 > _"You see, the thing is..."_
 
-...now you've got a simple tool for doing complex object validations. It's a bit like [Joi](https://github.com/hapijs/joi), only leaner so it's more suitable for the front-end.
+...now you've got a simple tool for complex validations. It's a like [Joi](https://github.com/hapijs/joi) for the browser.
 
 `the-thing-is` uses [`is-too`](https://github.com/LoudBit/is-too) for the comparisons. See its README for a list of what's available.
 
