@@ -7,14 +7,19 @@
 
 ### Array of Standards
 
-If you've got a single variable that needs to be within certain bounds then use an array to describe it with a series of checks that will be evaluated in order.
+When you've got a sole variable that needs to be within certain bounds then use an array to describe it with a series of properties that'll be evaluated in order.
 
 ``` javascript
 var whatYouExpect = ['present', 'integer', {greaterThan:0, lessThan:256}]
 
 the(16).is(whatYouExpect) // true
 the(640).is(whatYouExpect) // false
+
+// Recap
+the.last.thing // 640
+the.last.error // [{lessThan:256}]
 ```
+
 
 ### Tree of Standards
 
