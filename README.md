@@ -1,33 +1,11 @@
-> _"You see, the thing is..."_
+# `the-thing-is`
 
-...now you've got a simple tool for complex validations. It's like [Joi](https://github.com/hapijs/joi) for the browser.
-
-`the-thing-is` uses [`is-too`](https://github.com/LoudBit/is-too) for the comparisons. See its README for a list of what's available.
-
-
-### Array of Standards
-
-When you've got a sole variable that needs to be within certain bounds then use an array to describe it with a series of properties that'll be evaluated in order.
+> _"…now you've got errors you can work with."_
 
 ``` javascript
-var whatYouExpect = ['present', 'integer', {greaterThan:0, lessThan:256}]
+var the = require('the-thing-is')
 
-the(16).is(whatYouExpect) // true
-the(640).is(whatYouExpect) // false
-
-// Recap
-the.last.thing // 640
-the.last.error // [{lessThan:256}]
-```
-
-
-### Tree of Standards
-
-This is where the true value of `the-thing-is` is. Trees can be as deep as you want, and `the-thing-is` walks through it to check each node.
-Should the check fail, it'll record the path to the offending node on the tree and store it in `the.last.error`.
-
-``` javascript
-var userSchema = {
+var a_valid_user = {
   name: ['string'],
   address: {
     street1: ['present', 'string', {matches: /.*/}],
@@ -44,23 +22,75 @@ var user = {
     street1: '123 Any St.',
     street2: '',
     city: 'Anytown',
-    state: 'NE',
+    state: undefined,
     zip: 12345
   }
 }
 
-the(user).is(userSchema) // false
-the.last.error // [{ 'address.zip': ['string'] }]
+function checkUser() {
+  if (the(user).is(a_valid_user)) {
+    return true;
+  } else {
+    return the.last.error;
+  }
+}
+
+checkUser(user)
 ```
+
+``` javascript
+// the.last.error
+[
+  { 'address.state': ['present'] },
+  { 'address.zip': ['string'] }
+]
+```
+
+`the-thing-is` uses [`is-too`](https://github.com/LoudBit/is-too) under the hood to perform the comparisons. See its README for a list of what's available.
+
+## How to Write Validation Rules
+
+### Array of Standards
+
+If you've got a simple variable to check then use an array to describe what you're expecting. `the-thing-is` will run the subject through a series of standards that'll be evaluated in order.
+
+If the variable fails to meet any of the standards, the error will be added to an array at `the.last.error`. No further tests will be run.
+
+``` javascript
+var whatYouExpect = ['present', 'integer', {greaterThan:0, lessThan:256}]
+
+the(16).is(whatYouExpect) // true
+
+the(640).is(whatYouExpect) // false
+
+the.last.thing // 640
+the.last.error // [{lessThan:256}]
+```
+
+### Tree of Standards
+
+Trees can be made as deep as you want, and `the-thing-is` will walk through it all to tell you what it finds. Should the check fail, the path to the offending nodes on the tree are stored in `the.last.error` array.
+
+As illustrated in the first example, `checkUser(user)` returns an array of objects where the keys refer to the invalid propertiest and their values are arrays of errors.
+
+``` javascript
+// the.last.error
+[
+  { 'address.state': ['present'] },
+  { 'address.zip': ['string'] }
+]
+```
+
+In english this means `user.address.state` was `undefined`, and `user.address.zip` wasn't a string.
 
 
 ### Negative Standard
 
-If your subject is like an unruly teenager and you expect it to fail to live up to your standards all the time, then just say so.
+If you're expecting your subject to fail, then just say so.
 
 ``` javascript
-var teenager = undefined
-the(teenager).isnt('present') // true
+var thing = undefined
+the(thing).isnt('present') // true
 the.last.thing // undefined
 the.last.error // ['present']
 ```
@@ -68,19 +98,21 @@ the.last.error // ['present']
 
 ## Errors
 
-If your subject fails to live up to the standard you've set then `the-thing-is` will dutifully list all the ways it does so, in a way intended to be useful enough for you to deliver a useful message to your users.
+When your subjects fail to live up to your standards then `the-thing-is` will list _all_ of its failures.
 
-- Failed simple checks will return a string.
-- Failed objects will return an object with a key referring to the branch in the tree, and an array of failures.
+Note:
 
-Altogether, `the-thing-is` will return an array of all your subject's failures.
-
+- `the-thing-is` doesn't stop at the first error it finds. It'll describe _all_ errors for _all_ properties.
+- If there are no errors, `the.last.error` will be an empty array.
 
 ``` javascript
+// examples
+the.last.error == []
 the.last.error == ['number']
 the.last.error == [{greaterThan:0}]
 the.last.error == [{'foo.bar': ['number']}]
 the.last.error == [{'foo.bar': ['number', {greaterThan:0}]}]
+the.last.error == [{'foo.bar': ['number', {greaterThan:0}]}, {'foo.baz': ['number', {lessThan:256}]}]
 ```
 
 Additionally, if you describe your object using standards that don't exist in `is-too` then `the-thing-is` will throw a TypeError.
@@ -89,5 +121,3 @@ Additionally, if you describe your object using standards that don't exist in `i
 the('thing').is('gonnaThrowUp')
 // => TypeError("`gonnaThrowUp` isn't a valid comparison method.")
 ```
-
-
