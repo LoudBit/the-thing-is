@@ -69,6 +69,19 @@ the.last.error // [{lessThan:256}]
 
 ### Tree of Standards
 
+``` javascript
+var a_valid_user = {
+  name: ['string'],
+  address: {
+    street1: ['present', 'string', {matches: /.*/}],
+    street2: ['string'],
+    city: ['present', 'string'],
+    state: ['present', 'string', {matches: /^[A-Z]{2}$/}],
+    zip: ['present', 'string', {matches: /^[0-9]{5}$/}]
+  }
+}
+```
+
 Trees can be made as deep as you want, and `the-thing-is` will walk through it all to tell you what it finds. Should the check fail, the path to the offending nodes on the tree are stored in `the.last.error` array.
 
 As illustrated in the first example, `checkUser(user)` returns an array of objects where the keys refer to the invalid propertiest and their values are arrays of errors.
