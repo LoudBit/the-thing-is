@@ -508,6 +508,13 @@ describe('FALSY VALUES', function () {
       })
     })
   })
+
+  describe('the({ foo:undefined })', function() {
+    describe(".is({ foo:['present'] }", function () {
+      it('returns true', function () {
+        assert(the({ foo:undefined }).is({ foo: ['present'] }))
+      })
+    })
+  })
+
 })
-
-
