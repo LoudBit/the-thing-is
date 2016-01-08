@@ -62,11 +62,6 @@ describe('TESTING OBJECTS', function() {
         }
       }
     }
-    describe('.is("plainObject")', function() {
-      it('returns true', function() {
-        assert.equal(the(subject).is('plainObject'), true)
-      })
-    })
     describe('.is({foo: {bar: {baz: {buz: ["string"]}}}})', function() {
       it('returns true', function() {
         assert.equal(the(subject).is({foo: {bar: {baz: {buz: ['string']}}}}), true)
@@ -94,12 +89,6 @@ describe('TESTING OBJECTS', function() {
         zab: 'zab'
       }
     }
-
-    describe('is("plainObject")', function() {
-      it('returns true', function() {
-        assert.equal(the(subject).is('plainObject'), true)
-      })
-    })
     describe('is({foo: {bar: {baz: {buz: ["string"]}}}})', function() {
       it('returns true', function() {
         var whatIExpect = {
