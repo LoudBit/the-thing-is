@@ -31,40 +31,42 @@ function the (thing) {
     error: []
   }
   return {
-    is: what,
-    isnt: function (expected, thing) {
-      return !this.is(expected, thing)
-    }
+    is: begin
   }
 }
 
-
-// will recursively see if the(thing).is(whatYouExpect)
-function what (expected, thing) {
-
-  thing = thing || the.last.thing
+function begin (expected) {
+  var thing = the.last.thing;
 
   // the(thing).is()
   // expected is undefined or null -- so check mere presence of a thing
   if ( is.not.present(expected) )
     return see('present', thing)
 
+  return goDeeper(expected, thing)
+}
+
+// will recursively see if the(thing).is(whatYouExpect)
+function goDeeper (expected, thing) {
+
   // 'present' -- single boolean check
   // the(thing).is('integer') // true/false
   // the(thing).is('borkborkbork') // throw
-  if ( is.string(expected) )
+  if ( is.string(expected) ) {
     return see(expected, thing)
-
+  }
 
   // ['present', 'number'] -- array of boolean comparisons
   // ['present', 'number', {greaterThan:0}, {lessThanorEqualTo:100}] -- separated objects
   // ['present', 'number', {greaterThan:0, lessThanorEqualTo:100}] -- combined object
   // { foo: ['present', { bar: ['present'] }] }
   // the(thing).is(['present', 'integer'])
-  if ( is.array(expected) )
+  if ( is.array(expected) ) {
     expected.forEach(function(expected){
-      return what(expected, thing)
+      return goDeeper(expected, thing)
     })
+    return !the.last.error.length
+  }
 
   // { foo: ['bar'] } -- dictionary describing complex or deep objects
   // the(thing).is({
@@ -76,14 +78,13 @@ function what (expected, thing) {
   //     zip: 'string'
   //   }
   // })
-  if ( is.plainObject(expected) )
+  if ( is.plainObject(expected) ) {
     if (is.object(thing)) {
 
       // stash the path to branch the tree
       var pathStash = the.path.slice()
 
       Object.keys(expected).forEach(function expectedKeys(key, i) {
-
         var nexPectation, nexThing
 
         if (i > 0)
@@ -91,25 +92,32 @@ function what (expected, thing) {
 
         the.path.push(key)
 
-        if (!thing.hasOwnProperty(key))
+        if (!thing.hasOwnProperty(key)) {
           return see('present', thing[key]);
+        }
 
         nexPectation = expected[key]
         nexThing = thing[key]
 
-        if ( is.present(nexPectation) && is.present(nexThing) )
-          return what(nexPectation, nexThing)
-        else
-          return see(nexPectation, nexThing)
+        if (is.present(nexPectation)) {
+          if ( is.array(nexPectation) ) {
+            nexPectation.forEach(function(nexPected){
+              return goDeeper(nexPected, nexThing)
+            })
+            return !the.last.error.length
+          }
+          return goDeeper(nexPectation, nexThing)
+        }
       })
 
       the.path = pathStash.slice();
-    }
-    else
+    } else {
       Object.keys(expected).forEach(function(key, i, arr){
         var standard = expected[key];
         return see(key, thing, standard);
       })
+    }
+  }
 
   return !the.last.error.length;
 

@@ -97,18 +97,6 @@ As illustrated in the first example, `checkUser(user)` returns an array of objec
 In english this means `user.address.state` was `undefined`, and `user.address.zip` wasn't a string.
 
 
-### Negative Standard
-
-If you're expecting your subject to fail, then just say so.
-
-``` javascript
-var thing = undefined
-the(thing).isnt('present') // true
-the.last.thing // undefined
-the.last.error // ['present']
-```
-
-
 ## Errors
 
 When your subjects fail to live up to your standards then `the-thing-is` will list _all_ of its failures.

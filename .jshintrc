@@ -21,7 +21,7 @@
   "trailing": true,
   "maxparams": 3,
   "maxdepth": 4,
-  "maxstatements": 10,
+  "maxstatements": 12,
   "maxcomplexity": 12,
   "maxlen": false,
 
@@ -34,7 +34,6 @@
   "evil": false,
   "expr": false,
   "funcscope": false,
-  "globalstrict": false,
   "iterator": false,
   "lastsemic": false,
   "laxbreak": false,
