@@ -40,7 +40,6 @@ describe('THINGS WITH MULTIPLE ERRORS', function() {
             buzz: ['number', {greaterThan:0}]
           }
         })
-        console.log('\nthe.last.error: ', the.last.error, '\n');
       })
       it("reports `bar` isn't a string", function(){
         assert.deepEqual( the.last.error[0], {bar:['string']})

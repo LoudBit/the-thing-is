@@ -28,7 +28,6 @@ describe('the({ foo:undefined })', function() {
       )
     })
     it('sets the right error', function () {
-      console.log('the.last.error: ', the.last.error);
       assert.deepEqual(the.last.error, [{ foo: ['present'] }])
     })
   })
