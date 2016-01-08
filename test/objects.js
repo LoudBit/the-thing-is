@@ -40,12 +40,6 @@ describe('TESTING OBJECTS', function() {
       diablo: 666
     }
 
-    describe('.is("plainObject")', function() {
-      it('returns true', function() {
-        assert.equal(the(subject).is('plainObject'), true)
-      })
-    })
-
     describe('.is({ foo:"string", fizz:"string", diablo:["number", {greaterThan:0}, {lessThan:777}] })', function() {
       it('returns true', function() {
         assert.equal(the(subject).is({
