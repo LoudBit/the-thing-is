@@ -1,6 +1,6 @@
 {
   "name": "the-thing-is",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple tool for doing complex object validation.",
   "main": "the-thing-is.js",
   "scripts": {
