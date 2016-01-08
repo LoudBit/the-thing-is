@@ -1,5 +1,5 @@
 /* jshint quotmark:false */
-/* global describe, it, before */
+/* global describe, it*/
 'use strict'
 
 var assert = require('assert')
