@@ -29,12 +29,12 @@ describe('FALSY VALUES', function () {
       })
     })
     describe(".is('present')", function () {
-      it('returns false', function () {
-        assert.equal(the().is('present'), false)
+      it('returns true', function () {
+        assert.equal(the(false).is('present'), true)
       })
-      it('sets the correct error', function () {
-        assert(the.last.error.length)
-        assert.deepEqual(the.last.error, ['present'])
+      it('sets no error', function () {
+        assert(!the.last.error.length)
+        assert.deepEqual(the.last.error, [])
       })
     })
   })
