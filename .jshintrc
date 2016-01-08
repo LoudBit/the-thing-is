@@ -34,7 +34,6 @@
   "evil": false,
   "expr": false,
   "funcscope": false,
-  "globalstrict": false,
   "iterator": false,
   "lastsemic": false,
   "laxbreak": false,
