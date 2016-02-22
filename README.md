@@ -2,6 +2,9 @@
 
 > _"…now you've got errors you can work with."_
 
+[![bitHound Overall Score](https://www.bithound.io/github/LoudBit/the-thing-is/badges/score.svg)](https://www.bithound.io/github/LoudBit/the-thing-is) [![bitHound Dependencies](https://www.bithound.io/github/LoudBit/the-thing-is/badges/dependencies.svg)](https://www.bithound.io/github/LoudBit/the-thing-is/master/dependencies/npm) [![bitHound Dev Dependencies](https://www.bithound.io/github/LoudBit/the-thing-is/badges/devDependencies.svg)](https://www.bithound.io/github/LoudBit/the-thing-is/master/dependencies/npm) [![bitHound Code](https://www.bithound.io/github/LoudBit/the-thing-is/badges/code.svg)](https://www.bithound.io/github/LoudBit/the-thing-is)
+
+
 ``` javascript
 var the = require('the-thing-is')
 
