@@ -38,7 +38,7 @@ function checkUser() {
   }
 }
 
-checkUser(user)
+checkUser(user) // false, returns the.last.error
 ```
 
 ``` javascript
